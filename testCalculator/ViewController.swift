@@ -34,10 +34,24 @@ class ViewController: UIViewController {
             display.text = digit
             userIsInTheMiddleOfTyping = true
         }
-        
-        
     }
     
+    var operandStack = Array<Double>()
+    
+    @IBAction func enter() {
+        userIsInTheMiddleOfTyping = false
+        operandStack.append(displayValue)
+        print(operandStack)
+    }
+    var displayValue: Double{
+        get{
+            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+        }
+        set{
+            display.text = "\(newValue)"
+            userIsInTheMiddleOfTyping = false
+        }
+    }
 
 }
 
