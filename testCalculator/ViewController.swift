@@ -11,8 +11,10 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet var display: UILabel!
+    @IBOutlet var history: UILabel!
     
     var userIsInTheMiddleOfTyping = false
+    var historyCleared = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,7 +30,7 @@ class ViewController: UIViewController {
         
         // We need to get the value from the current label
         // And then we need to update it with appending the pressed digit at the ending.
-        let digit = sender.currentTitle!
+        var digit = sender.currentTitle!
         
         // We need to first check if the sender is "." and add the logic
         if ( digit == "." ){
@@ -36,11 +38,27 @@ class ViewController: UIViewController {
                 return
             }
         }
+        if ( digit == "pi" ){
+            digit = "\(22.0/7.0)"
+        }
         if ( userIsInTheMiddleOfTyping ){
             display.text = display.text! + digit
         } else{
             display.text = digit
             userIsInTheMiddleOfTyping = true
+        }
+        updateHistory(digit)
+
+    }
+    
+    func updateHistory ( digit: String ){
+        
+        if ( historyCleared ){
+            history.text = digit
+            historyCleared = false
+        }
+        else{
+            history.text = history.text! + digit
         }
     }
 
@@ -50,6 +68,7 @@ class ViewController: UIViewController {
         if userIsInTheMiddleOfTyping{
             enter()
         }
+        updateHistory(operation)
         switch operation {
         case "*": performOperation { $0 * $1 }
         case "/": performOperation { $1 / $0 }
@@ -82,6 +101,8 @@ class ViewController: UIViewController {
         // It means that the user pressed clear. We need to clear the stack and return this to the initial state.
         operandStack.removeAll()
         display.text = "0"
+        history.text = "History"
+        historyCleared = true
         userIsInTheMiddleOfTyping = false
     }
     var operandStack = Array<Double>()
@@ -90,6 +111,7 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTyping = false
         operandStack.append(displayValue)
         print(operandStack)
+        updateHistory("⏎")
     }
     var displayValue: Double{
         get{
