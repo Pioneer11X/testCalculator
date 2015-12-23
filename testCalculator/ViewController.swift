@@ -25,9 +25,17 @@ class ViewController: UIViewController {
     }
 
     @IBAction func numberPressed(sender: UIButton) {
+        
         // We need to get the value from the current label
         // And then we need to update it with appending the pressed digit at the ending.
         let digit = sender.currentTitle!
+        
+        // We need to first check if the sender is "." and add the logic
+        if ( digit == "." ){
+            if (( display.text!.rangeOfString(".")) != nil){
+                return
+            }
+        }
         if ( userIsInTheMiddleOfTyping ){
             display.text = display.text! + digit
         } else{
@@ -35,6 +43,7 @@ class ViewController: UIViewController {
             userIsInTheMiddleOfTyping = true
         }
     }
+
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
