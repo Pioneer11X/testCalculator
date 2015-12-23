@@ -56,6 +56,10 @@ class ViewController: UIViewController {
         case "+": performOperation { $0 + $1 }
         case "-": performOperation { $1 - $0 }
         case "sqrt": performOperation { sqrt($0) }
+            // Note: We perform the Sine and Cosine operations considering that the arguments passed are in radians.
+        case "Sin": performOperation { sin($0) }
+        case "Cos": performOperation { cos($0) }
+
         default: break
         }
     }
@@ -74,6 +78,12 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction func clearPressed(sender: UIButton) {
+        // It means that the user pressed clear. We need to clear the stack and return this to the initial state.
+        operandStack.removeAll()
+        display.text = "0"
+        userIsInTheMiddleOfTyping = false
+    }
     var operandStack = Array<Double>()
     
     @IBAction func enter() {
