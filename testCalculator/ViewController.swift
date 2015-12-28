@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     var userIsInTheMiddleOfTyping = false
     var historyCleared = true
     
+    var brain = CalculatorBrain()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -65,52 +67,40 @@ class ViewController: UIViewController {
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
+
         if userIsInTheMiddleOfTyping{
             enter()
         }
+        brain.performOperation(operation)
+        if let result = brain.evaluate() {
+            displayValue = result
+        }
+        else{
+            displayValue = 0.00
+        }
         updateHistory(operation)
-        switch operation {
-        case "*": performOperation { $0 * $1 }
-        case "/": performOperation { $1 / $0 }
-        case "+": performOperation { $0 + $1 }
-        case "-": performOperation { $1 - $0 }
-        case "sqrt": performOperation { sqrt($0) }
-            // Note: We perform the Sine and Cosine operations considering that the arguments passed are in radians.
-        case "Sin": performOperation { sin($0) }
-        case "Cos": performOperation { cos($0) }
 
-        default: break
-        }
     }
     
-    func performOperation( operation: (Double,Double)->Double){
-        if operandStack.count >= 2{
-            displayValue = operation(operandStack.removeLast() , operandStack.removeLast())
-            enter()
-        }
-    }
-    
-    private func performOperation( operation: Double -> Double ){
-        if operandStack.count >= 1{
-            displayValue = operation(operandStack.removeLast())
-            enter()
-        }
-    }
     
     @IBAction func clearPressed(sender: UIButton) {
         // It means that the user pressed clear. We need to clear the stack and return this to the initial state.
-        operandStack.removeAll()
+//        operandStack.removeAll()
         display.text = "0"
         history.text = "History"
         historyCleared = true
         userIsInTheMiddleOfTyping = false
     }
-    var operandStack = Array<Double>()
     
     @IBAction func enter() {
         userIsInTheMiddleOfTyping = false
-        operandStack.append(displayValue)
-        print(operandStack)
+        if let result = brain.pushOperand(displayValue){
+            displayValue = result
+        }
+        else{
+            // set it to nil
+            displayValue = 0.0
+        }
         updateHistory("⏎")
     }
     var displayValue: Double{
